@@ -1,0 +1,1 @@
+Chrome extension for youtube allowing users to watch videos and view comments simultaneously
