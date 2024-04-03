@@ -10,9 +10,19 @@
   "content_scripts": [
     {
       "js": ["scripts/content.js"],
-      "matches": ["https://www.youtube.com/watch?v=*"],
-      "run_at": "document_end"
+      "matches": ["https://www.youtube.com/*"],
+      "run_at": "document_start"
     }
   ],
-  "permissions": ["activeTab"]
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "externally_connectable": {
+    "matches": ["https://www.youtube.com/*"]
+  },
+  "permissions": ["activeTab", "tabs", "scripting", "nativeMessaging", "webNavigation"],
+  "host_permissions": [
+    "https://www.youtube.com/*"
+  ]
 }
