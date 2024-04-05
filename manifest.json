@@ -5,7 +5,7 @@
   "version": "1.0",
   "action": {
     "default_popup": "index.html",
-    "default_icon": "remove-yt-shorts.png"
+    "default_icon": "icon.png"
   },
   "content_scripts": [
     {
