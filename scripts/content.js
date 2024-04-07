@@ -1,4 +1,5 @@
 isSideView = false
+
 mainScript = () => {
 
   setTimeout(() => {
@@ -61,94 +62,77 @@ mainScript = () => {
 
     /* tests */
     let findChild = setInterval(() => {
-      if (columns.lastElementChild) {
+      if (columns.lastElementChild !== null) {
         secondaryColumn = columns.lastElementChild
         clearInterval(findChild)
       }
-    }, 500)
+    }, 1000)
 
-    //video elements (container for container...)
-    let videoElement = document.querySelector(".video-stream.html5-main-video")
-    let videoContainer = videoElement.parentElement
-
-    //container for progress bar and controls
-    let controlsContainer = document.querySelector(".ytp-chrome-bottom")
-
-    // saving all the original values of the comment section  
-    let comments_OGStyle = {
-      minWidth: commentContainer.style.minWidth,
-      maxWidth: commentContainer.style.maxWidth,
-      width: commentContainer.style.width,
-      minHeight: commentContainer.style.minHeight,
-      maxHeight: commentContainer.style.maxHeight,
-      height: commentContainer.style.height,
-      minWidth: commentContainer.style.minWidth,
-      paddingLeft: commentContainer.style.paddingLeft,
-      marginLeft: commentContainer.style.marginLeft,
-      marginRight: commentContainer.style.marginRight
-    }
-    let videoContainer_OGStyle = {
-      minWidth: videoContainer.style.minWidth,
-      maxWidth: videoContainer.style.maxWidth,
-      width: videoContainer.style.width,
-      height: videoContainer.style.height,
-      maxHeight: videoContainer.style.maxHeight,
-      minHeight: videoContainer.style.minHeight
-    }
-    let primary_OGStyle = {
-      marginLeft: primary.style.marginLeft,
-      width: primary.style.width,
-      maxWidth: primary.style.maxWidth,
-      minWidth: primary.style.minWidth,
-    }
-    let secondary_OGStyle = {
-      width: secondaryColumn.style.width,
-      maxWidth: secondaryColumn.style.maxWidth,
-      minWidth: secondaryColumn.style.minWidth,
-    }
+    /* custom media queries - kinda */
+    micBtn = document.querySelector("#voice-search-button")
+    newCommentWidth = 0
+    if (window.innerWidth < 1231) 
+      micBtn.style.visibility = "hidden"
+    else 
+      micBtn.style.visibility = "visible"
     
-    let videoElement_OGStyle = {
-      width: videoElement.style.width,
-      minWidth: videoElement.style.minWidth,
-      maxWidth: videoElement.style.maxWidth,
-      minHeight: videoElement.style.minHeight,
-      maxHeight: videoElement.style.maxHeight,
-      height: videoElement.style.height
-    }
+    if (window.innerWidth < 1017)
+      rightBtn.style.visibility = "hidden"
+    else 
+      rightBtn.style.visibility = "visible"
     
-   console.log(videoElement.style.width)
-    let controlsContainer_OGStyle = {
-      minWidth: controlsContainer.style.minWidth,
-      maxWidth: controlsContainer.style.maxWidth,
-      width: controlsContainer.style.width
-    }
+    addEventListener("resize", () => {
 
+      if (window.innerWidth < 1231) {
+        micBtn.style.visibility = "hidden"
+      } else {
+        micBtn.style.visibility = "visible"
+      }
+
+      if (window.innerWidth < 1017) {
+        rightBtn.style.visibility = "hidden"
+      }
+      else {
+        rightBtn.style.visibility = "visible"
+      }
+
+      if (secondaryColumn.style.visibility === "hidden") { 
+
+        if (window.innerWidth < 1017) {
+          func()
+          return;
+        }
+        console.log(window.innerWidth)
+        newCommentWidth = (1 - (primary.clientWidth / window.innerWidth) - 0.006) * 100
+        commentContainer.style.width = newCommentWidth + "%"
+      }
+    });
+    
     /*  main style changer function  */
     const func = () => {
+      
+      newCommentWidth = (1 - (primary.clientWidth / window.innerWidth) - 0.006) * 100
 
-      //console.log("--theatermode--> " + isTheaterMode)
+      if (secondaryColumn.style.visibility === "" && innerWidth > 1016){
 
-      if (secondaryColumn.style.display === ""){
         isSideView = true
-        secondaryColumn.style.display = "none"
-        secondaryColumn.style.removeProperty("margin-right");
-
-        videoContainer.style.height = "100%"
-        videoElement.style.height="100%"
         
         columns.appendChild(commentContainer)
+        secondaryColumn.style.visibility = "hidden"
 
-        primary.style.width = "65%"
-        primary.style.paddingLeft = "0"
-        primary.style.paddingRight = "0"
-        primary.style.marginLeft = "0"
-        primary.style.marginRight = "1%"
-
-        commentContainer.style.minWidth = "35%"
-        commentContainer.style.maxWidth = "35%"
-        commentContainer.style.minHeight = "85vh"
-        commentContainer.style.maxHeight = "85vh"
-        commentContainer.style.height = "85vh"
+        columns.style.justifyContent = "flex-start"
+        columns.style.marginLeft = "-10px"                
+        primary.style.display="inline-block"
+        
+        let commentHeight = document.querySelector("#player").clientHeight
+        
+        commentContainer.style.position = "absolute"
+        commentContainer.style.width = newCommentWidth + "%"
+        commentContainer.style.top = "78px"
+        commentContainer.style.right = "0px"
+        commentContainer.style.minHeight = commentHeight + "px" //set a vh or just use videoContainer.clientHeight?
+        commentContainer.style.maxHeight = commentHeight + "px"
+        commentContainer.style.height = commentHeight + "px"
         commentContainer.style.borderLeft = "solid"
         commentContainer.style.borderBottom = "solid"
         commentContainer.style.borderTop = "solid"
@@ -156,84 +140,38 @@ mainScript = () => {
         commentContainer.style.borderBottomLeftRadius = "10px"
         commentContainer.style.borderTopLeftRadius = "10px"
         commentContainer.style.borderWidth = "1px"
-        commentContainer.style.paddingLeft = "1%"
-        commentContainer.style.marginLeft = "0%"
-        commentContainer.style.marginTop = "1.25%"
-        commentContainer.style.overflowY = "scroll";
-        commentContainer.style.overflowX = "hidden";
-        commentContainer.style.marginRight = "-2vw"
-        
-        controlsContainer.style.minWidth = "96.5%"
-        controlsContainer.style.maxWidth = "96.5%"
-        controlsContainer.style.width = "96.5%"
+        commentContainer.style.overflowY = "scroll"
+        commentContainer.style.overflowX = "hidden"
+        commentContainer.style.paddingLeft = "8px"
 
-      } else if (secondaryColumn.style.display === "none") {
+      } else if (secondaryColumn.style.visibility === "hidden") {
 
         isSideView = false
-
-        videoContainer.style.removeProperty("width");
-        videoContainer.style.removeProperty("height");
-        
-        secondaryColumn.style.marginRight = "-1%"
-        secondaryColumn.style.removeProperty("display");
-
+        secondaryColumn.style.visibility = ""
         commentConCon.appendChild(commentContainer)
 
-        //return original styling
-        for (const [key, value] of Object.entries(comments_OGStyle)) {
-          if (value !== "")
-            commentContainer.style[key] = value
-          else if (value === "")
-            commentContainer.style.removeProperty(key)
-        }
+        columns.style.justifyContent = "center"
+        
+        //INSTEAD OF ADDING MARGINLEFT AND SHIT JUST READD THE OG CLASSES!
+        columns.style.marginLeft = ""
+        primary.classList.remove("style-scope")
+        primary.classList.remove("ytd-watch-flexy")
+        primary.classList.add("style-scope")
+        primary.classList.add("ytd-watch-flexy")
 
-        for (const [key, value] of Object.entries(videoContainer_OGStyle)) {
-          if (value !== "")
-            videoContainer.style[key] = value
-          else if (value === "")
-            videoContainer.style.removeProperty(key);
-        }
-        
-        for (const [key, value] of Object.entries(primary_OGStyle)) {
-          if (value !== "")
-            primary.style[key] = value
-          else if (value === "")
-            primary.style.removeProperty(key);
-        }
-        
-        for (const [key, value] of Object.entries(secondary_OGStyle)) {
-          if (value !== "")
-            secondaryColumn.style[key] = value
-          else if (value === "")
-            secondaryColumn.style.removeProperty(key);
-        }
-        
-        for (const [key, value] of Object.entries(videoElement_OGStyle)) {
-          if (value !== "")
-            videoElement.style[key] = value
-          else if (value === "")
-            videoElement.style.removeProperty(key);
-        }
-        
-        for (const [key, value] of Object.entries(controlsContainer_OGStyle)) {
-          if (value !== "")
-            controlsContainer.style[key] = value
-          else if (value === "")
-            controlsContainer.style.removeProperty(key);
-        }
-        
         commentContainer.style.overflowX = commentContainer.style.overflowY = "hidden"
-        commentContainer.style.minWidth = "100%"
-        commentContainer.style.maxWidth = "100%"
         commentContainer.style.width = "100%"
         commentContainer.style.minHeight = "100%"
         commentContainer.style.maxHeight = "100%"
         commentContainer.style.height = "100%"
         commentContainer.style.border = "none"
-        commentContainer.style.padding = "0"
-        commentContainer.style.margin = "0"
+        commentContainer.style.position = ""
+        commentContainer.style.top = ""
+        commentContainer.style.right = ""
+        commentContainer.style.paddingLeft = ""
       }
     }
+
     rightBtn.onclick = async function() {
       /*
       if (isTheaterMode) {
@@ -261,6 +199,7 @@ if ((location.href).substring(0, 30) === "https://www.youtube.com/watch?") {
       mainScript();
       clearInterval(mainInterval)
       chrome.runtime.sendMessage({msg: "init"})
+      console.log("how many times?")
     }
   }, 1500)
 }
