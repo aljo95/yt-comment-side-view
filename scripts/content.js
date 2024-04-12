@@ -1,8 +1,18 @@
-isSideView = false
 
 mainScript = () => {
 
+  isSideView = false
+
   setTimeout(() => {
+
+    //console.log("script started")
+
+    let sideImg = chrome.runtime.getURL("./resources/side_layout.png")
+    let ogImg = chrome.runtime.getURL("./resources/og_layout.png")
+
+    if (document.querySelector("#myBtnContainer")) {
+      return;
+    }
 
     //handling theater mode
     let theaterBtn = document.querySelector(".ytp-size-button.ytp-button")
@@ -12,27 +22,31 @@ mainScript = () => {
     else if (theaterBtn.title === 'Default view (t)')
       isTheaterMode = true
 
+    //handling fullscreen
+    
+    let fullscreenBtn = document.querySelector(".ytp-fullscreen-button.ytp-button")
+    /*
+    let isFullscreen
+    if (fullscreenBtn.title === 'Full screen (f)')
+    */
+
     let btnsContainer = document.createElement("div")
     btnsContainer.setAttribute("id", "myBtnContainer")
-    //let leftBtn = document.createElement("button")  // Future feature (swap sides)
-    //leftBtn.innerHTML = "swap side"
-    let rightBtn = document.createElement("button")
-    rightBtn.innerHTML = "swap view"
-    //btnsContainer.appendChild(leftBtn)
+    var rightBtn = document.createElement("img")
+    rightBtn.src = sideImg + "?" + Date.now()
+    rightBtn.alt="side-view"
     btnsContainer.appendChild(rightBtn)
+    //let leftBtn = document.createElement("button")  // Future feature (swap sides)
+    //leftBtn.innerHTML = "side"
+    //btnsContainer.appendChild(leftBtn)
     //leftBtn.style.width = rightBtn.style.width = "50px"
 
     //btn styling
     btnsContainer.style.height = "100%"
-    rightBtn.style.height = "100%"
-    rightBtn.style.width = "80px"
+    rightBtn.style.height = "100%" 
     rightBtn.style.color = "white"
     rightBtn.style.backgroundColor = "#0f0f0f"
-    rightBtn.style.border = "solid"
-    rightBtn.style.borderColor = "white"
-    rightBtn.style.borderWidth = "1px"
     rightBtn.style.pointerEvents = "auto"
-    rightBtn.style.borderRadius = "10px"
     rightBtn.style.display = "flex"
     rightBtn.style.alignItems = "center"
     rightBtn.style.justifyContent = "center"
@@ -46,25 +60,50 @@ mainScript = () => {
     //appending
     document.querySelector("#masthead").appendChild(btnsContainer);
     btnsContainer.style.position = "absolute"
-    btnsContainer.style.top = "14px"
-    btnsContainer.style.right = "180px"
-    btnsContainer.style.height = "30px"
-    btnsContainer.style.width = "80px"
+    btnsContainer.style.top = "14.5px"
+    btnsContainer.style.right = "190px"
+    btnsContainer.style.height = "29px"
+    btnsContainer.style.width = "45px"
+    btnsContainer.style.display = "flex"
+    btnsContainer.style.justifyContent = "center"
 
     //comment section
     let commentContainer = document.querySelector("#comments")       
     let commentConCon = document.querySelector("#below")
+    let commentsInterval = setInterval(() => {
+      commentContainer = document.querySelector("#comments")       
+      commentConCon = document.querySelector("#below")
+      if (commentConCon && commentContainer) {
+        clearInterval(commentsInterval)
+      }
+    }, 500)
     
     //primary and secondary column container
-    let primary = document.querySelector("#primary")
-    let secondaryColumn = document.querySelector("#secondary")
-    let columns = document.querySelector("#columns")
+    let primary = document.querySelectorAll("#primary")[document.querySelectorAll("#primary").length-1]
+    let p_id = setInterval(() => {
+      primary = document.querySelectorAll("#primary")[document.querySelectorAll("#primary").length-1]
+      if (primary)
+        clearInterval(p_id)
+    }, 500)
 
+    let secondaryColumn = document.querySelectorAll("#secondary")[document.querySelectorAll("#secondary").length-1]
+    let columns = document.querySelector("#columns")
+    
+    let columnsInterval = setInterval(() => {
+      secondaryColumn = document.querySelectorAll("#secondary")[document.querySelectorAll("#secondary").length-1]
+      columns = document.querySelector("#columns")
+      if (secondaryColumn && columns) {
+        clearInterval(columnsInterval)
+      }
+    }, 500)
+    
     /* tests */
     let findChild = setInterval(() => {
-      if (columns.lastElementChild !== null) {
-        secondaryColumn = columns.lastElementChild
-        clearInterval(findChild)
+      if (columns) {
+        if (columns.lastElementChild) {
+          secondaryColumn = columns.lastElementChild
+          clearInterval(findChild)
+        }
       }
     }, 1000)
 
@@ -77,10 +116,10 @@ mainScript = () => {
       micBtn.style.visibility = "visible"
     
     if (window.innerWidth < 1017)
-      rightBtn.style.visibility = "hidden"
+      btnsContainer.style.visibility = "hidden"
     else 
-      rightBtn.style.visibility = "visible"
-    
+      btnsContainer.style.visibility = "visible"
+
     addEventListener("resize", () => {
 
       if (window.innerWidth < 1231) {
@@ -90,70 +129,100 @@ mainScript = () => {
       }
 
       if (window.innerWidth < 1017) {
-        rightBtn.style.visibility = "hidden"
+        btnsContainer.style.visibility = "hidden"
       }
       else {
-        rightBtn.style.visibility = "visible"
+        btnsContainer.style.visibility = "visible"
       }
 
       if (secondaryColumn.style.visibility === "hidden") { 
-
         if (window.innerWidth < 1017) {
           func()
           return;
         }
-        console.log(window.innerWidth)
-        newCommentWidth = (1 - (primary.clientWidth / window.innerWidth) - 0.006) * 100
+        newCommentWidth = (1 - (primary.clientWidth / window.innerWidth) - 0.01) * 100
         commentContainer.style.width = newCommentWidth + "%"
       }
     });
     
-    /*  main style changer function  */
-    const func = () => {
-      
-      newCommentWidth = (1 - (primary.clientWidth / window.innerWidth) - 0.006) * 100
 
-      if (secondaryColumn.style.visibility === "" && innerWidth > 1016){
+
+    /*******************************  main script  *******************************/
+    const func = () => {
+
+      let primaryWidth
+      if (!primary.clientWidth) {
+        let pI = setInterval(() => {
+          primaryWidth = document.querySelectorAll("#primary")[document.querySelectorAll("#primary").length-1].clientWidth
+          if (primaryWidth)
+            clearInterval(pI)
+        }, 500)
+      }
+
+      newCommentWidth = (1 - (primary.clientWidth / window.innerWidth) - 0.01) * 100
+      newCommentHeight = document.querySelector("#player").clientHeight
+      commentContainer.style.scrollbarWidth = "none"
+
+      if (!isSideView && innerWidth > 1016){
 
         isSideView = true
-        
+        rightBtn.src = ogImg + "?" + Date.now()
+        rightBtn.alt="side-view"
+
         columns.appendChild(commentContainer)
-        secondaryColumn.style.visibility = "hidden"
+
+        while (commentContainer.parentNode.id !== "columns") {
+          setTimeout(() => {
+            columns.appendChild(commentContainer)
+          }, 200)
+        }
+        
+        let secHidden=document.querySelectorAll("#secondary")[document.querySelectorAll("#secondary").length-1].style.visibility = "hidden"
 
         columns.style.justifyContent = "flex-start"
-        columns.style.marginLeft = "-10px"                
+        columns.style.marginLeft = "-10px"   
+  
         primary.style.display="inline-block"
-        
-        let commentHeight = document.querySelector("#player").clientHeight
-        
+          
         commentContainer.style.position = "absolute"
         commentContainer.style.width = newCommentWidth + "%"
+        commentContainer.style.display = "inline-block"
+
         commentContainer.style.top = "78px"
         commentContainer.style.right = "0px"
-        commentContainer.style.minHeight = commentHeight + "px" //set a vh or just use videoContainer.clientHeight?
-        commentContainer.style.maxHeight = commentHeight + "px"
-        commentContainer.style.height = commentHeight + "px"
+        commentContainer.style.minHeight = newCommentHeight + "px"
+        commentContainer.style.maxHeight = newCommentHeight + "px"
+        commentContainer.style.height = newCommentHeight + "px"
         commentContainer.style.borderLeft = "solid"
         commentContainer.style.borderBottom = "solid"
         commentContainer.style.borderTop = "solid"
-        commentContainer.style.borderColor = "#242424"
+        commentContainer.style.borderColor = "#3c3c3c"
         commentContainer.style.borderBottomLeftRadius = "10px"
         commentContainer.style.borderTopLeftRadius = "10px"
-        commentContainer.style.borderWidth = "1px"
+        commentContainer.style.borderWidth = "1.5px"
         commentContainer.style.overflowY = "scroll"
         commentContainer.style.overflowX = "hidden"
         commentContainer.style.paddingLeft = "8px"
+        commentContainer.style.overscrollBehavior = "contain" //new
 
-      } else if (secondaryColumn.style.visibility === "hidden") {
+      } else if (isSideView) {
 
         isSideView = false
-        secondaryColumn.style.visibility = ""
+        rightBtn.src = sideImg + "?" + Date.now()
+        rightBtn.alt="side-view"
+
         commentConCon.appendChild(commentContainer)
+        while (commentContainer.parentNode.id !== "below") {
+          setTimeout(() => {
+            commentConCon.appendChild(commentContainer)
+          }, 200)
+        }
+
+        let secShown = document.querySelectorAll("#secondary")[document.querySelectorAll("#secondary").length-1].style.visibility = ""
 
         columns.style.justifyContent = "center"
-        
-        //INSTEAD OF ADDING MARGINLEFT AND SHIT JUST READD THE OG CLASSES!
         columns.style.marginLeft = ""
+
         primary.classList.remove("style-scope")
         primary.classList.remove("ytd-watch-flexy")
         primary.classList.add("style-scope")
@@ -161,36 +230,52 @@ mainScript = () => {
 
         commentContainer.style.overflowX = commentContainer.style.overflowY = "hidden"
         commentContainer.style.width = "100%"
-        commentContainer.style.minHeight = "100%"
-        commentContainer.style.maxHeight = "100%"
-        commentContainer.style.height = "100%"
+        commentContainer.style.minHeight = ""
+        commentContainer.style.maxHeight = ""
+        commentContainer.style.height = ""
         commentContainer.style.border = "none"
         commentContainer.style.position = ""
         commentContainer.style.top = ""
         commentContainer.style.right = ""
         commentContainer.style.paddingLeft = ""
+        commentContainer.style.overscrollBehavior = ""
       }
     }
 
-    rightBtn.onclick = async function() {
-      /*
+    /*******************************  btns and injector *******************************/
+    rightBtn.onclick = function() {
       if (isTheaterMode) {
-        await theaterBtn.click()
+          theaterBtn.click()
+      }
+      setTimeout(() => {
         func()
-      } else
-      */
-        func()
+      }, 50)
+    }
+
+    /*  Future feature
+    leftBtn.onclick = function() {
+      columns.appendChild(primary)
+    }
+    */
+
+    //theater handler
+    theaterBtn.onclick = function() {      
+      if (isSideView) {
+          func()
+      }
+
+      isTheaterMode = !isTheaterMode
     }
 
     //theater handler
-    //theaterBtn.onclick = function() {               
-    //  isTheaterMode = !isTheaterMode
-    //  if (isSideView) 
-    //    rightBtn.click()
-    //}
-  }, 2000)
-}
+    fullscreenBtn.onclick = function() {
+      if (isSideView) {
+        func()
+      }
+    }
 
+  }, 1000)
+}
 
 /* Injector - automatically and manually when the automatic one fails (because SPAs and navigation) */
 if ((location.href).substring(0, 30) === "https://www.youtube.com/watch?") {
@@ -199,7 +284,6 @@ if ((location.href).substring(0, 30) === "https://www.youtube.com/watch?") {
       mainScript();
       clearInterval(mainInterval)
       chrome.runtime.sendMessage({msg: "init"})
-      console.log("how many times?")
     }
   }, 1500)
 }
