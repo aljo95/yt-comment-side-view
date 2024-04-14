@@ -5,14 +5,12 @@ mainScript = () => {
 
   setTimeout(() => {
 
-    //console.log("script started")
-
-    let sideImg = chrome.runtime.getURL("./resources/side_layout.png")
-    let ogImg = chrome.runtime.getURL("./resources/og_layout.png")
-
     if (document.querySelector("#myBtnContainer")) {
       return;
     }
+
+    var sideImg = chrome.runtime.getURL("./resources/side_layout.png")
+    var ogImg = chrome.runtime.getURL("./resources/og_layout.png")
 
     //handling theater mode
     let theaterBtn = document.querySelector(".ytp-size-button.ytp-button")
@@ -33,6 +31,7 @@ mainScript = () => {
     let btnsContainer = document.createElement("div")
     btnsContainer.setAttribute("id", "myBtnContainer")
     var rightBtn = document.createElement("img")
+    rightBtn.setAttribute("id", "rightBtnID")
     rightBtn.src = sideImg + "?" + Date.now()
     rightBtn.alt="side-view"
     btnsContainer.appendChild(rightBtn)
@@ -79,18 +78,22 @@ mainScript = () => {
     }, 500)
     
     //primary and secondary column container
-    let primary = document.querySelectorAll("#primary")[document.querySelectorAll("#primary").length-1]
+    //let primary = document.querySelectorAll("#primary")[document.querySelectorAll("#primary").length-1]
+    let primary = document.querySelector("#primary.style-scope.ytd-watch-flexy")
     let p_id = setInterval(() => {
-      primary = document.querySelectorAll("#primary")[document.querySelectorAll("#primary").length-1]
+      //primary = document.querySelectorAll("#primary")[document.querySelectorAll("#primary").length-1]
+      primary = document.querySelector("#primary.style-scope.ytd-watch-flexy")
       if (primary)
         clearInterval(p_id)
     }, 500)
 
-    let secondaryColumn = document.querySelectorAll("#secondary")[document.querySelectorAll("#secondary").length-1]
+    //let secondaryColumn = document.querySelectorAll("#secondary")[document.querySelectorAll("#secondary").length-1]
+    let secondaryColumn = document.querySelector("#secondary.style-scope.ytd-watch-flexy")
     let columns = document.querySelector("#columns")
     
     let columnsInterval = setInterval(() => {
-      secondaryColumn = document.querySelectorAll("#secondary")[document.querySelectorAll("#secondary").length-1]
+      //secondaryColumn = document.querySelectorAll("#secondary")[document.querySelectorAll("#secondary").length-1]
+      secondaryColumn = document.querySelector("#secondary.style-scope.ytd-watch-flexy")
       columns = document.querySelector("#columns")
       if (secondaryColumn && columns) {
         clearInterval(columnsInterval)
@@ -142,18 +145,27 @@ mainScript = () => {
         }
         newCommentWidth = (1 - (primary.clientWidth / window.innerWidth) - 0.01) * 100
         commentContainer.style.width = newCommentWidth + "%"
+
+        //document.querySelector("#player").clientHeight
+        let newHeight = document.querySelector("#player").clientHeight
+        commentContainer.style.minHeight = newHeight + "px"
+        commentContainer.style.maxHeight = newHeight + "px"
+        commentContainer.style.height = newHeight + "px"
       }
     });
-    
-
 
     /*******************************  main script  *******************************/
-    const func = () => {
+    var func = () => {
+
+      if ((location.href).substring(0, 30) !== "https://www.youtube.com/watch?") {
+        return;
+      }
 
       let primaryWidth
       if (!primary.clientWidth) {
         let pI = setInterval(() => {
-          primaryWidth = document.querySelectorAll("#primary")[document.querySelectorAll("#primary").length-1].clientWidth
+          //primaryWidth = document.querySelectorAll("#primary")[document.querySelectorAll("#primary").length-1].clientWidth
+          primaryWidth = document.querySelector("#primary.style-scope.ytd-watch-flexy").clientWidth
           if (primaryWidth)
             clearInterval(pI)
         }, 500)
@@ -177,7 +189,8 @@ mainScript = () => {
           }, 200)
         }
         
-        let secHidden=document.querySelectorAll("#secondary")[document.querySelectorAll("#secondary").length-1].style.visibility = "hidden"
+        //let secHidden=document.querySelectorAll("#secondary")[document.querySelectorAll("#secondary").length-1].style.visibility = "hidden"
+        let secHidden=document.querySelector("#secondary.style-scope.ytd-watch-flexy").style.visibility="hidden"
 
         columns.style.justifyContent = "flex-start"
         columns.style.marginLeft = "-10px"   
@@ -202,7 +215,7 @@ mainScript = () => {
         commentContainer.style.borderWidth = "1.5px"
         commentContainer.style.overflowY = "scroll"
         commentContainer.style.overflowX = "hidden"
-        commentContainer.style.paddingLeft = "8px"
+        commentContainer.style.paddingLeft = "9px"
         commentContainer.style.overscrollBehavior = "contain" //new
 
       } else if (isSideView) {
@@ -218,7 +231,8 @@ mainScript = () => {
           }, 200)
         }
 
-        let secShown = document.querySelectorAll("#secondary")[document.querySelectorAll("#secondary").length-1].style.visibility = ""
+        //let secShown = document.querySelectorAll("#secondary")[document.querySelectorAll("#secondary").length-1].style.visibility = ""
+        let secShown = document.querySelector("#secondary.style-scope.ytd-watch-flexy").style.visibility = ""
 
         columns.style.justifyContent = "center"
         columns.style.marginLeft = ""
@@ -273,17 +287,55 @@ mainScript = () => {
         func()
       }
     }
-
   }, 1000)
 }
 
 /* Injector - automatically and manually when the automatic one fails (because SPAs and navigation) */
 if ((location.href).substring(0, 30) === "https://www.youtube.com/watch?") {
-  let mainInterval = setInterval(() => {
+  var mainInterval = setInterval(() => {
     if (document.querySelector("#buttons")) {
       mainScript();
       clearInterval(mainInterval)
       chrome.runtime.sendMessage({msg: "init"})
     }
   }, 1500)
+} else if ((location.href).substring(0, 24) === "https://www.youtube.com/" && document.querySelector("#myBtnContainer")) {
+  if (document.querySelector("#columns").children[document.querySelector("#columns").children.length-1].nodeName === "YTD-COMMENTS") {
+    let columns = document.querySelector("#columns")
+    let commentContainer = document.querySelector("#comments")
+    let commentConCon = document.querySelector("#below")
+    let primary = document.querySelector("#primary.style-scope.ytd-watch-flexy")
+    let rightBtn = document.querySelector("#rightBtnID")
+    let sideImg = chrome.runtime.getURL("./resources/side_layout.png")
+    isSideView = false
+
+    rightBtn.src = sideImg + "?" + Date.now()
+    rightBtn.alt="side-view"
+
+    commentConCon.appendChild(commentContainer)
+    while (commentContainer.parentNode.id !== "below") {
+      setTimeout(() => {
+        commentConCon.appendChild(commentContainer)
+      }, 200)
+    }
+
+    let secShown = document.querySelector("#secondary.style-scope.ytd-watch-flexy").style.visibility = ""
+    columns.style.justifyContent = "center"
+    columns.style.marginLeft = ""
+    primary.classList.remove("style-scope")
+    primary.classList.remove("ytd-watch-flexy")
+    primary.classList.add("style-scope")
+    primary.classList.add("ytd-watch-flexy")
+    commentContainer.style.overflowX = commentContainer.style.overflowY = "hidden"
+    commentContainer.style.width = "100%"
+    commentContainer.style.minHeight = ""
+    commentContainer.style.maxHeight = ""
+    commentContainer.style.height = ""
+    commentContainer.style.border = "none"
+    commentContainer.style.position = ""
+    commentContainer.style.top = ""
+    commentContainer.style.right = ""
+    commentContainer.style.paddingLeft = ""
+    commentContainer.style.overscrollBehavior = ""
+  }
 }
