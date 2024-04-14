@@ -9,7 +9,7 @@ chrome.tabs.onUpdated.addListener(
                         hasBeenRun = true    
                 }
             )
-            if ((changeInfo.url) && ((changeInfo.url).substring(0, 30) === "https://www.youtube.com/watch?") && (!hasBeenRun)) {
+            if ((changeInfo.url) && ((changeInfo.url).substring(0, 24) === "https://www.youtube.com/") && (!hasBeenRun)) {
                 chrome.scripting.executeScript({target: {tabId: tabId}, files: ['scripts/content.js']});
             } 
         });
