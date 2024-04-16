@@ -1,13 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "side-comments",
-  "description": "comments next to video",
+  "name": "yt-side-comments",
+  "description": "youtube - comments next to video",
   "version": "1.0",
   "action": {
     "default_popup": "index.html",
     "default_icon": "resources/icon.png"
   },
-  
   "background": {
     "service_worker": "background.js",
     "type": "module"
@@ -15,14 +14,14 @@
   "externally_connectable": {
     "matches": ["https://www.youtube.com/*"]
   },
-  "permissions": ["activeTab", "tabs", "scripting", "nativeMessaging", "webNavigation"],
+  "permissions": ["scripting"],
   "host_permissions": [
     "https://www.youtube.com/*"
   ],
   "web_accessible_resources": [
     {
       "resources": [ "resources/og_layout.png", "resources/side_layout.png" ],
-      "matches": ["<all_urls>"]
+      "matches": ["https://www.youtube.com/*"]
     }
   ]
 }
