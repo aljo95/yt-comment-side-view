@@ -1,8 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "yt-side-comments",
+  "name": "Youtube Side Comments",
   "description": "youtube - comments next to video",
   "version": "1.0",
+  "icons":{
+    "48": "resources/icon.png"
+  },
   "action": {
     "default_popup": "index.html",
     "default_icon": "resources/icon.png"
