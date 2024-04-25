@@ -2,6 +2,9 @@
 chrome.tabs.onUpdated.addListener(
     function(tabId, changeInfo) {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+            if (!tabs.some(tabElement => tabId == tabElement.id)) {
+                return;
+            }
             let hasBeenRun = false
             chrome.runtime.onMessage.addListener(
                 function(req) {
