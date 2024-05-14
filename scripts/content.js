@@ -181,16 +181,17 @@ mainScript = () => {
         rightBtn.src = ogImg + "?" + Date.now()
         rightBtn.alt="side-view"
 
+        let secHidden=document.querySelector("#secondary.style-scope.ytd-watch-flexy").style.visibility="hidden"
         columns.appendChild(commentContainer)
 
         while (commentContainer.parentNode.id !== "columns") {
           setTimeout(() => {
             columns.appendChild(commentContainer)
-          }, 200)
+          }, 100)
         }
         
         //let secHidden=document.querySelectorAll("#secondary")[document.querySelectorAll("#secondary").length-1].style.visibility = "hidden"
-        let secHidden=document.querySelector("#secondary.style-scope.ytd-watch-flexy").style.visibility="hidden"
+        //let secHidden=document.querySelector("#secondary.style-scope.ytd-watch-flexy").style.visibility="hidden"
 
         columns.style.justifyContent = "flex-start"
         columns.style.marginLeft = "-10px"   
@@ -228,7 +229,7 @@ mainScript = () => {
         while (commentContainer.parentNode.id !== "below") {
           setTimeout(() => {
             commentConCon.appendChild(commentContainer)
-          }, 200)
+          }, 100)
         }
 
         //let secShown = document.querySelectorAll("#secondary")[document.querySelectorAll("#secondary").length-1].style.visibility = ""
@@ -287,7 +288,7 @@ mainScript = () => {
         func()
       }
     }
-  }, 1000)
+  }, 500)
 }
 
 /* Injector - automatically and manually when the automatic one fails (because SPAs and navigation) */
